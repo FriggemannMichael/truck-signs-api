@@ -14,7 +14,6 @@ from .models import (
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     image = serializers.ImageField(use_url=True)
     sample_product_id = serializers.SerializerMethodField("get_sample_product_id")
 
@@ -36,14 +35,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class LetteringItemCategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = LetteringItemCategory
         fields = "__all__"
 
 
 class LetteringItemVariationSerializer(serializers.ModelSerializer):
-
     lettering_item_category = LetteringItemCategorySerializer(read_only=True)
 
     class Meta:
@@ -52,7 +49,6 @@ class LetteringItemVariationSerializer(serializers.ModelSerializer):
 
 
 class LetteringItemVariationSimpleSerializer(serializers.ModelSerializer):
-
     lettering_item_category = LetteringItemCategorySerializer(read_only=True)
 
     class Meta:
@@ -61,14 +57,12 @@ class LetteringItemVariationSimpleSerializer(serializers.ModelSerializer):
 
 
 class ProductColorSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ProductColor
         fields = "__all__"
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
     category = CategorySerializer(read_only=True)
     image = serializers.ImageField(use_url=True)
     detail_image = serializers.ImageField(use_url=True)
@@ -79,7 +73,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductVariationSerializer(serializers.ModelSerializer):
-
     product = ProductSerializer(read_only=True)
     product_color = ProductColorSerializer(read_only=True)
     all_lettering_items = LetteringItemVariationSerializer(source="lettering_item_variation_set", many=True)
@@ -99,7 +92,6 @@ class ProductVariationSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-
     email_user = serializers.EmailField(required=True)
 
     class Meta:
@@ -108,7 +100,6 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-
     user_email = serializers.EmailField(required=True)
     product = ProductVariationSerializer(read_only=True)
     comment = serializers.CharField(required=False, allow_blank=True)
@@ -120,7 +111,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-
     user_email = serializers.EmailField(required=True)
     image = serializers.ImageField(use_url=True)
     text = serializers.CharField(required=False)

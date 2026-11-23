@@ -147,7 +147,6 @@ class RetrieveOrder(RetrieveAPIView):
 
 
 class PaymentView(GenericAPIView):
-
     authentication_classes = []
     serializer_class = PaymentSerializer
 

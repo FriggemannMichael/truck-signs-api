@@ -187,7 +187,7 @@ if os.getenv("CLOUD_NAME", ""):
 if MODE != "prod" or DEBUG is True:
     logger.debug("dumping settings for debugging/development purposes:")
     print("")
-    print(f"[{"---" * 20} \t\tSTART SETTINGS DEBUG INFO \t{"---" * 20}]")
+    print(f"[{'---' * 20} \t\tSTART SETTINGS DEBUG INFO \t{'---' * 20}]")
     print("")
     print(f"[ROOT BASE DIR]: \t\t{ROOT_BASE_DIR}")
     print(f"[BASE DIR]: \t\t\t{BASE_DIR}")
@@ -199,5 +199,5 @@ if MODE != "prod" or DEBUG is True:
     for key, value in DATABASES["default"].items():
         print(f"  {key}: \t\t\t{value}")
     print("")
-    print(f"[{"---" * 20} \t\tEND SETTINGS DEBUG INFO \t{"---" * 20}]")
+    print(f"[{'---' * 20} \t\tEND SETTINGS DEBUG INFO \t{'---' * 20}]")
     print("")
