@@ -5,12 +5,14 @@ on:
         branches: ["main"]
         paths:
             - "**/*.py"
-            - "requirements.txt"
+            - "pyproject.toml"
+            - "uv.lock"
     pull_request:
         branches: ["main"]
         paths:
             - "**/*.py"
-            - "requirements.txt"
+            - "pyproject.toml"
+            - "uv.lock"
 
 permissions:
     contents: read
@@ -27,13 +29,13 @@ jobs:
                   python-version: "3.12"
             - name: Install Dependencies
               run: |
-                  pip install -r requirements.txt
+                  pip install uv
+                  uv sync --frozen
             - name: Lint and Check Formatting
               run: |
-                  echo "Running flake8 and black"
-                  flake8 .
-                  black --check .
-                  isort --check-only .
+                  echo "Running ruff"
+                  uv run ruff check .
+                  uv run ruff format --check .
 
     test:
         runs-on: ubuntu-latest
@@ -48,8 +50,9 @@ jobs:
                   python-version: "3.12"
             - name: Install Dependencies
               run: |
-                  pip install -r requirements.txt
+                  pip install uv
+                  uv sync --frozen
             - name: Run Django Tests
               working-directory: src
               run: |
-                  python manage.py test --verbosity=2
+                  uv run python manage.py test --verbosity=2
