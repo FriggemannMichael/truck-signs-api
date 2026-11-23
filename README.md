@@ -49,35 +49,25 @@ cd truck-signs-api
 cp example.env .env
 ```
 
-3. Create virtual environment:
+3. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and the dependencies (this creates the virtual environment in `.venv`):
 ```bash
-python -m venv <venv_name>
+uv sync
 ```
 
-4. Activate virtual environment:
+4. Migrate database:
 ```bash
-source <venv_name>/scripts/activate
+uv run python src/manage.py makemigrations
+uv run python src/manage.py migrate
 ```
 
-5. Install requirements:
+5. Collect static files:
 ```bash
-pip install -r requirements.txt
+uv run python src/manage.py collectstatic
 ```
 
-6. Migrate database:
+6. Start the Python Development Server:
 ```bash
-python src/manage.py makemigrations
-python src/manage.py migrate
-```
-
-7. Collect static files:
-```bash
-python src/manage.py collectstatic
-```
-
-8. Start the Python Development Server:
-```bash
-python src/manage.py runserver
+uv run python src/manage.py runserver
 ```
 
 ## Usage
@@ -119,7 +109,7 @@ The behavior of some of the views had to be modified to address functionalities 
     git clone <INSERT URL>
     cd truck-signs-api
     ```
-1. Configure a virtual env
+1. Install the dependencies and create the virtual env (requires [uv](https://docs.astral.sh/uv/getting-started/installation/))
     ```bash
     python -m venv venv
     venv\Scripts\activate
@@ -153,20 +143,20 @@ The behavior of some of the views had to be modified to address functionalities 
     5. The `EMAIL_HOST_USER` and the `EMAIL_HOST_PASSWORD` are the credentials to send emails from the website when a client makes a purchase. This is currently disable, but the code to activate this can be found in views.py in the create order view as comments. Therefore, any valid email and password will work.
 1. Run the migrations:
     ```bash
-    python src/manage.py makemigrations
-    python src/manage.py migrate
+    uv run python src/manage.py makemigrations
+    uv run python src/manage.py migrate
     ```
 1. Collect static files:
     ```bash
-    python src/manage.py collectstatic
+    uv run python src/manage.py collectstatic
     ```
 1. Run the app:
     ```bash
-    python src/manage.py runserver
+    uv run python src/manage.py runserver
     ```
 1. (Optional step) To create a super user run:
     ```bash
-    python src/manage.py createsuperuser
+    uv run python src/manage.py createsuperuser
     ```
 1. (Optional step) Set up the database. [Django database setup example](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04).
 
