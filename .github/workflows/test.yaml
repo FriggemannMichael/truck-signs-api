@@ -5,14 +5,12 @@ on:
         branches: ["main"]
         paths:
             - "**/*.py"
-            - "pyproject.toml"
-            - "uv.lock"
+            - "requirements.txt"
     pull_request:
         branches: ["main"]
         paths:
             - "**/*.py"
-            - "pyproject.toml"
-            - "uv.lock"
+            - "requirements.txt"
 
 permissions:
     contents: read
@@ -23,16 +21,19 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v5
-            - name: Install uv
-              uses: astral-sh/setup-uv@v6
+            - name: Set up Python 3.12
+              uses: actions/setup-python@v6
               with:
-                  enable-cache: true
+                  python-version: "3.12"
             - name: Install Dependencies
-              run: uv sync --frozen
+              run: |
+                  pip install -r requirements.txt
             - name: Lint and Check Formatting
               run: |
-                  uv run ruff check .
-                  uv run ruff format --check .
+                  echo "Running flake8 and black"
+                  flake8 .
+                  black --check .
+                  isort --check-only .
 
     test:
         runs-on: ubuntu-latest
@@ -41,13 +42,14 @@ jobs:
             MODE: dev
         steps:
             - uses: actions/checkout@v5
-            - name: Install uv
-              uses: astral-sh/setup-uv@v6
+            - name: Set up Python 3.12
+              uses: actions/setup-python@v6
               with:
-                  enable-cache: true
+                  python-version: "3.12"
             - name: Install Dependencies
-              run: uv sync --frozen
+              run: |
+                  pip install -r requirements.txt
             - name: Run Django Tests
               working-directory: src
               run: |
-                  uv run python manage.py test --verbosity=2
+                  python manage.py test --verbosity=2
