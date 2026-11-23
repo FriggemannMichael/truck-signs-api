@@ -28,5 +28,5 @@ else
   echo "Superuser variables not set, skipping superuser creation"
 fi
 
-exec gunicorn tsa_app.wsgi:application --bind 0.0.0.0:8020
+exec gunicorn tsa_app.wsgi:application --bind "0.0.0.0:${APP_PORT:-8020}"
 

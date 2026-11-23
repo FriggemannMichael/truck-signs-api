@@ -1,7 +1,10 @@
 FROM python:3.12-slim
 
+ARG APP_PORT=8020
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    APP_PORT=${APP_PORT}
 
 # netcat is needed by entrypoint.sh to wait for the database
 RUN apt-get update \
@@ -21,6 +24,6 @@ RUN chmod +x /app/entrypoint.sh
 
 WORKDIR /app/src
 
-EXPOSE 8020
+EXPOSE ${APP_PORT}
 
 ENTRYPOINT ["/app/entrypoint.sh"]

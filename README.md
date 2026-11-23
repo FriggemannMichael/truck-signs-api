@@ -116,6 +116,7 @@ cp example.env .env
 | `DJANGO_SUPERUSER_PASSWORD` | optional | Password of that superuser. |
 | `DB_HOST` | no | Database host. Default: `localhost`. Compose sets it to `db`. |
 | `DB_PORT` | no | Database port. Default: `5432`. |
+| `APP_PORT` | no | Port the API listens on. Default: `8020`. Set at build time and at runtime. |
 | `MODE` | no | `prod` (PostgreSQL) or `dev` (SQLite). Compose sets `prod`. |
 | `DEBUG_ENABLED` | no | `True` or `False`. Compose sets `False`. |
 | `CORS_ALLOWED_ORIGINS` | no | Comma-separated list of allowed origins. Default: `http://localhost:3000`. |
@@ -139,6 +140,12 @@ docker build -t truck-signs-api:latest .
 ```
 
 The image is based on `python:3.12-slim`. Dependencies are installed with [uv](https://docs.astral.sh/uv/) from `pyproject.toml` and `uv.lock`. Use another name or tag by changing the `-t` value, for example `-t truck-signs-api:1.0.0`. If you do, adjust the `image` entry in `docker-compose.yml` too.
+
+The build accepts one optional build argument: `APP_PORT` (default `8020`), the port the API listens on:
+
+```bash
+docker build --build-arg APP_PORT=8030 -t truck-signs-api:latest .
+```
 
 ### Run with Docker Compose
 
@@ -189,7 +196,7 @@ docker compose exec backend python manage.py createsuperuser
 
 ### Adapt the setup
 
-- **Different port:** change the left side of `'8020:8020'` in `docker-compose.yml` to publish another host port. To change the port inside the container, also change `--bind` in `entrypoint.sh` and `EXPOSE` in the `Dockerfile`.
+- **Different port:** set `APP_PORT` in `.env`. Compose passes it to the image build, to the container (gunicorn listens on it) and to the port mapping. With `docker run`, pass `--build-arg APP_PORT=<PORT>` when building, `-e APP_PORT=<PORT>` and `-p <PORT>:<PORT>` when running.
 - **Different database credentials:** change `DB_NAME`, `DB_USER` and `DB_PASSWORD` in `.env`. PostgreSQL only creates the user and database on the first start, so for an existing volume run `docker compose down -v` first (this deletes the data).
 - **Different PostgreSQL version:** change the image tag of the `db` service. Major version upgrades need a data migration or a fresh volume.
 - **Production access:** add the host name or IP under which the API is reached to `ALLOWED_HOSTS` in `.env`. Never put IP addresses into files that are committed.
