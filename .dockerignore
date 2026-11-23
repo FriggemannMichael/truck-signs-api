@@ -1,0 +1,25 @@
+# Version control and IDE
+.git
+.gitignore
+.idea
+
+# Secrets and local config
+.env
+.env.*
+!example.env
+
+# Python artifacts
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Local data and generated files
+src/db.sqlite3
+src/media
+src/staticfiles
+
+# Docs and CI are not needed in the image
+docs
+.github
