@@ -54,7 +54,6 @@ class Product(models.Model):
 
 
 class ProductVariation(models.Model):
-
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     product_color = models.ForeignKey(ProductColor, on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.IntegerField(default=1)

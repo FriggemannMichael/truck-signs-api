@@ -4,25 +4,18 @@ This project has various quality assurance mechanisms setup which are described 
 
 ## Linter Setup
 
-### Code-Style Checker
+We use [Ruff](https://docs.astral.sh/ruff/) for linting, import sorting and formatting. It replaces flake8, isort and black.
+The configuration lives in the `[tool.ruff]` section of `pyproject.toml`.
 
-For code style checks we use `flake8` linter for python. Its configuration uses defaults from PEP8 standard and deviates where necessary, e.g. `max-line-width`.
+### Linter (code style and import order)
 
-Run `flake8 <PYTHON_CODE_SOURCE_PATH>` to run the code-style checks for the project.
-
-### Import Order
-
-To keep imports sorted in a consistent manner without manual overhead we implement `isort` as an
-automation routine to keep imports sorted consistently throughout the project.
-
-Run `isort --check-only <PYTHON_CODE_SOURCE_PATH>` to check your import orders in the source code.
+Run `uv run ruff check .` to run the style checks (rules `E`, `W`, `F` and `I` for import order).
+Use `uv run ruff check --fix .` to apply auto-fixable fixes.
 
 ### Formatter
 
-We use `black` as formatter for python source code.
-
-Run `black --check .` to run the formatter in a check-only mode (which is used in CI).
-In order to apply auto-fixable fixes you can provide an option to the black command.
+Run `uv run ruff format --check .` to run the formatter in a check-only mode (which is used in CI).
+Run `uv run ruff format .` to apply the formatting.
 
 ## CI Pipeline
 

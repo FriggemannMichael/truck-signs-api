@@ -6,6 +6,8 @@ import logging
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 # Configure Django logging
@@ -54,7 +56,12 @@ else:
     LOG_LEVEL = "DEBUG"
     logger.setLevel(level=LOG_LEVEL)
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me-in-production")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    if MODE == "prod":
+        raise ImproperlyConfigured("SECRET_KEY must be set in production mode")
+    # dev/test only: random key per process, nothing is stored in the repo
+    SECRET_KEY = get_random_secret_key()
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -105,25 +112,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "tsa_app.wsgi.application"
 
-db_engine = "django.db.backends.sqlite3" if MODE != "prod" else "django.db.backends.postgresql"  # noqa E501
-
-pg_config = {
-    "ENGINE": db_engine,
-    "NAME": os.getenv("DB_NAME", "trucksigns_db"),
-    "USER": os.getenv("DB_USER", "trucksigns_user"),
-    "PASSWORD": os.getenv("DB_PASSWORD", "supertrucksignsuser!"),
-    "HOST": os.getenv("DB_HOST", "localhost"),
-    "PORT": os.getenv("DB_PORT", "5432"),
-}
-
-sqlite_config = {
-    "ENGINE": db_engine,
-    "NAME": BASE_DIR / "db.sqlite3",
-}
-
-db_config = sqlite_config if MODE != "prod" else pg_config
-
-DATABASES = {"default": db_config}
+if MODE == "prod":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ["DB_NAME"],
+            "USER": os.environ["DB_USER"],
+            "PASSWORD": os.environ["DB_PASSWORD"],
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -187,7 +193,7 @@ if os.getenv("CLOUD_NAME", ""):
 if MODE != "prod" or DEBUG is True:
     logger.debug("dumping settings for debugging/development purposes:")
     print("")
-    print(f"[{"---" * 20} \t\tSTART SETTINGS DEBUG INFO \t{"---" * 20}]")
+    print(f"[{'---' * 20} \t\tSTART SETTINGS DEBUG INFO \t{'---' * 20}]")
     print("")
     print(f"[ROOT BASE DIR]: \t\t{ROOT_BASE_DIR}")
     print(f"[BASE DIR]: \t\t\t{BASE_DIR}")
@@ -199,5 +205,5 @@ if MODE != "prod" or DEBUG is True:
     for key, value in DATABASES["default"].items():
         print(f"  {key}: \t\t\t{value}")
     print("")
-    print(f"[{"---" * 20} \t\tEND SETTINGS DEBUG INFO \t{"---" * 20}]")
+    print(f"[{'---' * 20} \t\tEND SETTINGS DEBUG INFO \t{'---' * 20}]")
     print("")
